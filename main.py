@@ -10,8 +10,8 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
-# Optional: add contact me email functionality (Day 60)
-# import smtplib
+import smtplib
+from email.mime.text import MIMEText
 
 
 '''
@@ -273,24 +273,29 @@ def about():
 def contact():
     return render_template("contact.html", current_user=current_user)
 
-# MAIL_ADDRESS = os.environ.get("EMAIL_KEY")
-# MAIL_APP_PW = os.environ.get("PASSWORD_KEY")
+MAIL_ADDRESS_SENDER = os.environ.get("EMAIL_KEY_SENDER")
+MAIL_ADDRESS_RECIPIENT = os.environ.get("EMAIL_KEY_RECIPIENT")
+MAIL_APP_PW = os.environ.get("PASSWORD_KEY")
 
-# @app.route("/contact", methods=["GET", "POST"])
-# def contact():
-#     if request.method == "POST":
-#         data = request.form
-#         send_email(data["name"], data["email"], data["phone"], data["message"])
-#         return render_template("contact.html", msg_sent=True)
-#     return render_template("contact.html", msg_sent=False)
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        data = request.form
+        send_email("New Contact",f"NAME: {data["name"]}, EMAIL: {data["email"]}, PHONE: {data["phone"]}, MESSAGE: data["message"]",MAIL_ADDRESS_SENDER,[MAIL_ADDRESS_RECIPIENT], MAIL_APP_PW)
+        return render_template("contact.html", msg_sent=True)
+    return render_template("contact.html", msg_sent=False)
 
 
-# def send_email(name, email, phone, message):
-#     email_message = f"Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage:{message}"
-#     with smtplib.SMTP("smtp.gmail.com") as connection:
-#         connection.starttls()
-#         connection.login(MAIL_ADDRESS, MAIL_APP_PW)
-#         connection.sendmail(MAIL_ADDRESS, MAIL_APP_PW, email_message)
+def send_email(subject, body, sender, recipients, password):
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ', '.join(recipients)
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+       smtp_server.login(sender, password)
+       smtp_server.sendmail(sender, recipients, msg.as_string())
+    
+
 
 
 if __name__ == "__main__":
