@@ -1,7 +1,6 @@
 from datetime import date
 import os
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
-from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import *
 from flask_gravatar import Gravatar
@@ -32,31 +31,7 @@ This will install the packages from the requirements.txt for this project.
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 ckeditor = CKEditor(app)
-csrf = CSRFProtect(app)
-csrf.init_app(app)
-app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'
-app.config['UPLOADED_PATH'] = os.path.join('User/Desktop', 'uploads')
 
-@app.route('/files/<filename>')
-@csrf.exempt
-def uploaded_files(filename):
-    path = app.config['UPLOADED_PATH']
-    return send_from_directory(path, filename)
-
-import uuid
-
-@app.route('/upload', methods=['POST'])
-@csrf.exempt
-def upload():
-    f = request.files.get('upload')
-    extension = f.filename.split('.')[1].lower()
-    if extension not in ['jpg', 'gif', 'png', 'jpeg']:
-        return upload_fail(message='Image only!')
-    unique_filename = str(uuid.uuid4())
-    f.filename = unique_filename + '.' + extension
-    f.save(os.path.join(app.config['UPLOADED_PATH'], f.filename))
-    url = url_for('uploaded_files', filename=f.filename)
-    return upload_success(url=url)
 Bootstrap5(app)
 
 # Configure Flask-Login
