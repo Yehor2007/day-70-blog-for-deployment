@@ -1,6 +1,7 @@
 from datetime import date
 import os
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
+from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import *
 from flask_gravatar import Gravatar
