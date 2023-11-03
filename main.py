@@ -277,7 +277,7 @@ MAIL_APP_PW = os.environ.get("PASSWORD_KEY")
 def contact():
     if request.method == "POST":
         data = request.form
-        send_email("New Contact",f"NAME: {data['name']}, EMAIL: {data['email']}, PHONE: {data['phone']}, MESSAGE: {data['message']}",MAIL_ADDRESS_SENDER,[MAIL_ADDRESS_RECIPIENT], MAIL_APP_PW)
+        send_email("New Contact",f"NAME: {data['name']},\n EMAIL: {data['email']},\n PHONE: {data['phone']},\n MESSAGE: {data['message']}\n",MAIL_ADDRESS_SENDER,[MAIL_ADDRESS_RECIPIENT], MAIL_APP_PW)
         return render_template("contact.html", msg_sent=True)
     return render_template("contact.html", msg_sent=False)
 
