@@ -35,7 +35,7 @@ ckeditor = CKEditor(app)
 csrf = CSRFProtect(app)
 csrf.init_app(app)
 app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'
-app.config['UPLOADED_PATH'] = os.path.join(basedir, 'uploads')
+app.config['UPLOADED_PATH'] = os.path.join('User/Desktop', 'uploads')
 
 @app.route('/files/<filename>')
 @csrf.exempt
