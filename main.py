@@ -232,6 +232,26 @@ def add_new_post():
         return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form, current_user=current_user)
 
+from flask_ckeditor import upload_success, upload_fail
+
+app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'  # this value can be endpoint or url
+
+@app.route('/files/<path:filename>')
+def uploaded_files(filename):
+    path = '/Desktop/'
+    return send_from_directory(path, filename)
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    f = request.files.get('upload')
+    # Add more validations here
+    extension = f.filename.split('.')[-1].lower()
+    if extension not in ['jpg', 'gif', 'png', 'jpeg']:
+        return upload_fail(message='Image only!')
+    f.save(os.path.join('/the/uploaded/directory', f.filename))
+    url = url_for('uploaded_files', filename=f.filename)
+    return upload_success(url, filename=f.filename)
+
 
 # Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
