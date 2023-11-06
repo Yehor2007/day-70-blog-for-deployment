@@ -31,6 +31,7 @@ This will install the packages from the requirements.txt for this project.
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 ckeditor = CKEditor(app)
+app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'  
 
 Bootstrap5(app)
 
@@ -234,11 +235,11 @@ def add_new_post():
 
 from flask_ckeditor import upload_success, upload_fail
 
-app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'  # this value can be endpoint or url
+# this value can be endpoint or url
 
 @app.route('/files/<path:filename>')
 def uploaded_files(filename):
-    path = '/Desktop/'
+    path = '/Users/yehor/Downloads'
     return send_from_directory(path, filename)
 
 @app.route('/upload', methods=['POST'])
@@ -248,7 +249,7 @@ def upload():
     extension = f.filename.split('.')[-1].lower()
     if extension not in ['jpg', 'gif', 'png', 'jpeg']:
         return upload_fail(message='Image only!')
-    f.save(os.path.join('/the/uploaded/directory', f.filename))
+    f.save(os.path.join('/Users/yehor/Downloads', f.filename))
     url = url_for('uploaded_files', filename=f.filename)
     return upload_success(url, filename=f.filename)
 
